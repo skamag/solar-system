@@ -1,39 +1,53 @@
-import * as THREE from 'three';
+import * as THREE from "three"
 
 function getInstanced({ distance, mesh, size }) {
-    const numObjs = 25 + Math.floor(Math.random() * 25);
-    const instaMesh = new THREE.InstancedMesh(mesh.geometry, mesh.material, numObjs);
-    const matrix = new THREE.Matrix4();
-    for (let i = 0; i < numObjs; i += 1) {
-        const radius = distance + Math.random() * 0.75 - 0.05;
-        // const radius = distance + Math.random() * 0.1 - 0.05;
-        const angle = Math.random() * Math.PI * 2;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
-        const position = new THREE.Vector3(x, 0, z);
-        const quaternion = new THREE.Quaternion();
-        quaternion.random();
-        const currentSize = size + Math.random() * 0.05 - 0.025;
-        const scale = new THREE.Vector3().setScalar(currentSize);
-        matrix.compose(position, quaternion, scale);
-        instaMesh.setMatrixAt(i, matrix);
-    }
-    instaMesh.userData = {
-        update(t) {
-            const rate = -0.0002 * (index * 0.1);
-            instaMesh.rotation.z = t * rate;
-        }
-    };
-    return instaMesh;
+  const numObjs = 250 + Math.floor(Math.random() * 25)
+  //   const numObjs = 25 + Math.floor(Math.random() * 25)
+  const instaMesh = new THREE.InstancedMesh(
+    mesh.geometry,
+    mesh.material,
+    numObjs
+  )
+  const matrix = new THREE.Matrix4()
+  for (let i = 0; i < numObjs; i += 1) {
+    const radius = distance + Math.random() * 2.5 - 0.05
+    // const radius = distance + Math.random() * 0.1 - 0.05;
+    const angle = Math.random() * Math.PI * 2
+    const x = Math.cos(angle) * radius
+    const z = Math.sin(angle) * radius
+    const position = new THREE.Vector3(x, 0, z)
+    const quaternion = new THREE.Quaternion()
+    quaternion.random()
+    const currentSize = size + Math.random() * 0.05 - 0.025
+    const scale = new THREE.Vector3().setScalar(currentSize)
+    matrix.compose(position, quaternion, scale)
+    instaMesh.setMatrixAt(i, matrix)
+  }
+  instaMesh.userData = {
+    update(t) {
+      const rate = -0.0002 * (index * 0.1)
+      instaMesh.rotation.z = t * rate
+    },
+  }
+  return instaMesh
 }
 function getAsteroidBelt(objs) {
-    const group = new THREE.Group();
-    objs.forEach((obj) => {
-        const asteroids = getInstanced({ distance: 7.5, mesh: obj, size: 0.05 });
-        // const asteroids = getInstanced({ distance: 2.5, mesh: obj, size: 0.035 });
-        group.add(asteroids);
-    });
-    return group;
+  const group = new THREE.Group()
+  objs.forEach((obj) => {
+    const asteroids = getInstanced({ distance: 7.5, mesh: obj, size: 0.025 })
+    // const asteroids = getInstanced({ distance: 2.5, mesh: obj, size: 0.035 });
+    group.add(asteroids)
+  })
+
+  const rate = 0.1
+  //   const rate = Math.random() * 1 - 1.0
+  group.userData.update = (t) => {
+    group.rotation.y = t * rate
+  }
+
+  group.rotation.x = 0.25
+
+  return group
 }
 
-export default getAsteroidBelt;
+export default getAsteroidBelt
