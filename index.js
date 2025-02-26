@@ -63,17 +63,39 @@ gltfLoader.load("./assets/Astronaut.glb", (gltf) => {
 let astronautCount = null; // Store fetched astronaut count
 
 // Fetch astronaut data on initial load
-function fetchAstronautData() {
-  fetch("http://api.open-notify.org/astros.json")
-    .then((response) => response.json())
-    .then((data) => {
+// function fetchAstronautData() {
+//   fetch("http://api.open-notify.org/astros.json")
+//     .then((response) => response.json())
+//     .then((data) => {
+//       astronautCount = data.number; // Store the fetched number
+//       console.log(`Number of astronauts in space: ${astronautCount}`);
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching astronaut data:", error);
+//     });
+// }
+
+const fetchAstronautData = async () => {
+  const url =
+    "https://api.allorigins.win/raw?url=" +
+    encodeURIComponent("http://api.open-notify.org/astros.json");
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data) {
+      console.log("Astronauts in space:", data.people);
       astronautCount = data.number; // Store the fetched number
-      console.log(`Number of astronauts in space: ${astronautCount}`);
-    })
-    .catch((error) => {
-      console.error("Error fetching astronaut data:", error);
-    });
-}
+    } else {
+      console.error("No data received");
+    }
+  } catch (error) {
+    console.error("Error fetching astronaut data:", error);
+  }
+};
+
+fetchAstronautData();
 
 // Call fetch function when the script loads
 fetchAstronautData();
